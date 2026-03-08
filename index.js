@@ -9,6 +9,20 @@ config();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.get('/privacy', (req, res) => {
+  res.send(`
+    <html>
+      <body>
+        <h1>Privacy Policy</h1>
+        <p>This application is a webhook integration with Meta/Instagram. 
+        It receives and processes webhook events from Instagram.</p>
+        <p>We do not store any personal data. All webhook data is processed 
+        and discarded unless explicitly required for the application's function.</p>
+        <p>If you have any questions, please contact us.</p>
+      </body>
+    </html>
+  `);
+});
 /**
  * Handles the verification request meta sends to verify your webhook endpoint
  * Modify the API path and logic as you see fit.
