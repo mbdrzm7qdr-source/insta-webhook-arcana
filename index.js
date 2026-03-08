@@ -91,6 +91,19 @@ const senderId = messaging?.sender?.id;
 const messageText = messaging?.message?.text;
 
 if (senderId && messageText) {
+  await fetch('https://general-runtime.voiceflow.com/state/user/' + senderId + '/interact', {
+    method: 'POST',
+    headers: {
+      'Authorization': process.env.VOICEFLOW_API_KEY,
+      'Content-Type': 'application/json',
+      'versionID': 'production'
+    },
+    body: JSON.stringify({
+      action: { type: 'launch' },
+      projectID: '6992038979502f9204f0cc6a'
+    })
+  });
+
   const voiceflowResponse = await fetch('https://general-runtime.voiceflow.com/state/user/' + senderId + '/interact', {
     method: 'POST',
     headers: {
