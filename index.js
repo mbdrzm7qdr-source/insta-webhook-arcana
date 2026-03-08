@@ -121,8 +121,8 @@ if (senderId && messageText) {
   }
 }
 
-res.status(200).send();
-  } catch (error) {
+} catch (error) {
+    console.error('Webhook error:', error.message);
     next(error);
   }
 });
