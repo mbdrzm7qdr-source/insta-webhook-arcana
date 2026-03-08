@@ -115,8 +115,8 @@ const replyText = traces
     .map(trace => trace.payload.message)
     .join(' ');
 
-  if (replyText) {
-    await fetch('https://graph.facebook.com/v18.0/me/messages', {
+if (replyText) {
+    const igResponse = await fetch('https://graph.facebook.com/v18.0/me/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -125,6 +125,8 @@ const replyText = traces
         access_token: process.env.META_PAGE_ACCESS_TOKEN
       })
     });
+    const igData = await igResponse.json();
+    console.log('Instagram response:', JSON.stringify(igData));
   }
 }
 
