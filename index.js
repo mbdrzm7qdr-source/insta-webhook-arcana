@@ -1,6 +1,7 @@
 const express = require('express');
 const { config } = require('dotenv');
 const { genHmac, compareHmac } = require('./utils/crypto');
+const crypto = require('node:crypto');
 const app = express();
 
 // Loads the environment variables
@@ -73,7 +74,7 @@ app.post('/meta/webhook/instagram', async (req, res, next) => {
     }
 
     // Generate a SHA256 signature using the payload and your app secret
-    const localSig = genHmac(req.rawBody, process.env.META_APP_SECRET);
+    const localSig = crypto.createHmac('sha256', process.env.META_APP_SECRET).update(req.rawBody).digest('hex');
 
     // Compare the generated signature to the one in the x-hub-signature-256 header
     const metaSig = x_hub_signature.split('sha256=')[1];
