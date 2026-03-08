@@ -46,7 +46,7 @@ app.get('/meta/webhook/verify_request', (req, res, next) => {
     next(error);
   }
 });
-
+The callback URL or verify token couldn't be validated. Please verify the provided information or try again later.
 // Handle instagram webhook events
 app.post('/meta/webhook/instagram', async (req, res, next) => {
   try {
