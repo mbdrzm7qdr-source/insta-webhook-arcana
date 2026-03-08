@@ -7,7 +7,11 @@ const app = express();
 config();
 
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 
 app.get('/privacy', (req, res) => {
   res.send(`
@@ -69,7 +73,7 @@ app.post('/meta/webhook/instagram', async (req, res, next) => {
     }
 
     // Generate a SHA256 signature using the payload and your app secret
-    const localSig = genHmac(req.body, process.env.META_APP_SECRET);
+    const localSig = genHmac(req.rawBody, process.env.META_APP_SECRET);
 
     // Compare the generated signature to the one in the x-hub-signature-256 header
     const metaSig = x_hub_signature.split('sha256=')[1];
