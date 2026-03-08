@@ -48,7 +48,7 @@ app.get('/meta/webhook/verify_request', (req, res, next) => {
 });
 
 // Handle instagram webhook events
-app.post('/meta/webhook/instagram', (req, res, next) => {
+app.post('/meta/webhook/instagram', async (req, res, next) => {
   try {
     const x_hub_signature = req.headers['x-hub-signature-256'];
 
@@ -67,13 +67,49 @@ app.post('/meta/webhook/instagram', (req, res, next) => {
       throw new Error("Signatures don't match");
     }
 
-    // TODO: Add the specific business logic that aligns with your use case.
-    // This section of the code is a placeholder for the functionality that
-    // should be implemented based on the requirements of your application.
-    // Feel free to modify or extend this logic to suit your needs.
+    const body = req.body;
+const entry = body.entry?.[0];
+const messaging = entry?.messaging?.[0];
+const senderId = messaging?.sender?.id;
+const messageText = messaging?.message?.text;
 
-    // Always respond with a 200 OK if everything goes well
-    res.status(200).send();
+if (senderId && messageText) {
+  const voiceflowResponse = await fetch('https://general-runtime.voiceflow.com/state/user/' + senderId + '/interact', {
+    method: 'POST',
+    headers: {
+      'Authorization': process.env.VOICEFLOW_API_KEY,
+      'Content-Type': 'application/json',
+      'versionID': 'production'
+    },
+    body: JSON.stringify({
+      action: {
+        type: 'text',
+        payload: messageText
+      },
+      projectID: '6992038979502f9204f0cc6a'
+    })
+  });
+
+  const traces = await voiceflowResponse.json();
+  const replyText = traces
+    .filter(trace => trace.type === 'text')
+    .map(trace => trace.payload.message)
+    .join(' ');
+
+  if (replyText) {
+    await fetch('https://graph.facebook.com/v18.0/me/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipient: { id: senderId },
+        message: { text: replyText },
+        access_token: process.env.META_PAGE_ACCESS_TOKEN
+      })
+    });
+  }
+}
+
+res.status(200).send();
   } catch (error) {
     next(error);
   }
