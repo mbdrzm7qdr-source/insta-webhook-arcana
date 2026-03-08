@@ -46,6 +46,19 @@ app.get('/meta/webhook/verify_request', (req, res, next) => {
     next(error);
   }
 });
+app.get('/meta/webhook/instagram', (req, res, next) => {
+  try {
+    const query = req.query;
+    const hubVerifyToken = query['hub.verify_token'];
+    const hubChallenge = query['hub.challenge'];
+    if (hubVerifyToken !== process.env.META_HUB_VERIFY_TOKEN) {
+      throw new Error("Verify token don't match");
+    }
+    res.status(200).send(hubChallenge);
+  } catch (error) {
+    next(error);
+  }
+});
 // Handle instagram webhook events
 app.post('/meta/webhook/instagram', async (req, res, next) => {
   try {
