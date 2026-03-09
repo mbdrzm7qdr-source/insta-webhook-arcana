@@ -121,7 +121,7 @@ if (senderId && messageText) {
   });
 
   const voiceflowData = await voiceflowResponse.json();
-console.log('Voiceflow response:', JSON.stringify(voiceflowData));
+console.log('Instagram response:', JSON.stringify(igData));
 const traces = Array.isArray(voiceflowData) ? voiceflowData : voiceflowData?.trace || [];
 const replyText = traces
     .filter(trace => trace.type === 'text')
