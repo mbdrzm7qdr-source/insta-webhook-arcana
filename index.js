@@ -123,6 +123,7 @@ if (senderId && messageText) {
 const voiceflowData = await voiceflowResponse.json();
 console.log('Voiceflow response:', JSON.stringify(voiceflowData));
 const traces = Array.isArray(voiceflowData) ? voiceflowData : voiceflowData?.trace || [];
+const replyText = traces
     .filter(trace => trace.type === 'text')
     .map(trace => trace.payload.message)
     .join(' ');
